@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071a2b">
+  <title>SmartFly AI — Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html#flights" aria-label="SmartFly AI"><span class="brand-mark">✳</span><strong class="brand-name">SmartFly <span class="brand-ai">AI</span></strong></a>
+    <nav aria-label="Main navigation">
+      <a href="index.html#flights">Flights</a>
+      <a href="index.html#stays">Stays</a>
+      <a href="index.html#how-it-works">How it works</a>
+    </nav>
+    <div class="topbar-right">
+      <a class="help-link" href="index.html#flights">✦ <span>Smart search</span></a>
+      <a class="connect-hotel-btn" href="index.html#connect-hotel" id="login-topbar-connect-hotel-btn"><span>🏨</span> Connect your hotel</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="login-section" id="login-page">
+      <div class="login-container">
+        <div class="login-card">
+          <!-- Brand Name at the Top -->
+          <div class="login-brand-top">
+            <a class="brand login-brand-link" href="index.html#flights" aria-label="SmartFly AI flights">
+              <span class="brand-mark">✳</span>
+              <strong class="brand-name">SmartFly <span class="brand-ai">AI</span></strong>
+            </a>
+            <div class="login-badge">✦ Smart Fare &amp; Trip Access</div>
+          </div>
+
+          <!-- Unauthenticated Flow (Phone & OTP) -->
+          <div id="login-unauth-container">
+            <!-- Step 1: Phone Number -->
+            <div id="login-step-phone" class="login-step">
+              <div class="login-header-text">
+                <h2>Sign in to SmartFly AI</h2>
+                <p>Enter your phone number to receive a one-time verification code (OTP).</p>
+              </div>
+
+              <form id="phone-login-form" class="login-form">
+                <div class="phone-input-group">
+                  <label for="phone-number" class="login-label">MOBILE PHONE NUMBER</label>
+                  <div class="phone-input-wrap">
+                    <div class="country-prefix">
+                      <span class="flag-icon" id="country-flag">🇮🇳</span>
+                      <select id="country-code" aria-label="Country calling code">
+                        <option value="+91" data-flag="🇮🇳" selected>+91 (IN)</option>
+                        <option value="+1" data-flag="🇺🇸">+1 (US)</option>
+                        <option value="+44" data-flag="🇬🇧">+44 (UK)</option>
+                        <option value="+971" data-flag="🇦🇪">+971 (UAE)</option>
+                        <option value="+65" data-flag="🇸🇬">+65 (SG)</option>
+                        <option value="+61" data-flag="🇦🇺">+61 (AU)</option>
+                        <option value="+49" data-flag="🇩🇪">+49 (DE)</option>
+                        <option value="+33" data-flag="🇫🇷">+33 (FR)</option>
+                        <option value="+81" data-flag="🇯🇵">+81 (JP)</option>
+                        <option value="+966" data-flag="🇸🇦">+966 (SA)</option>
+                        <option value="+1" data-flag="🇨🇦">+1 (CA)</option>
+                      </select>
+                    </div>
+                    <input 
+                      type="tel" 
+                      id="phone-number" 
+                      name="phone" 
+                      placeholder="98765 43210" 
+                      inputmode="numeric"
+                      pattern="[0-9]{10}"
+                      maxlength="10"
+                      title="Enter exactly 10 digits"
+                      autocomplete="tel-national"
+                      required
+                    >
+                  </div>
+                  <small class="login-hint" id="phone-hint">Standard SMS rates may apply for OTP verification</small>
+                </div>
+
+                <button type="submit" id="send-otp-btn" class="login-submit-btn">
+                  <span>Get OTP</span>
+                  <b>→</b>
+                </button>
+              </form>
+
+              <div class="login-guest-wrap">
+                <a href="index.html?guest=1" class="login-guest-link">Continue to website as guest →</a>
+              </div>
+
+              <div class="login-hotel-connect-box">
+                <span>Are you a hotelier or property partner?</span>
+                <a href="index.html#connect-hotel" class="connect-hotel-btn">🏨 Connect your hotel <b>→</b></a>
+              </div>
+
+              <div class="login-features">
+                <div class="feature-item">
+                  <span class="feature-icon">⚡</span>
+                  <span>Fast 4-digit code login &amp; verification</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-icon">🔒</span>
+                  <span>Safe, passwordless &amp; secure access</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-icon">✈️</span>
+                  <span>Sync your flight searches, stays &amp; alerts</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: OTP Verification -->
+            <div id="login-step-otp" class="login-step" hidden>
+              <div class="login-header-text">
+                <h2>Enter Verification Code</h2>
+                <p>We sent a 4-digit OTP to <strong id="display-phone-number">+91 98765 43210</strong></p>
+                <button type="button" id="change-phone-btn" class="text-link-btn">✏️ Change phone number</button>
+              </div>
+
+              <!-- Demo helper pill -->
+              <div class="demo-otp-banner" id="demo-otp-banner">
+                <span class="demo-otp-icon">💡</span>
+                <div class="demo-otp-text">
+                  <span>Demo Code: <strong id="demo-otp-code">1234</strong></span>
+                  <button type="button" id="autofill-otp-btn" class="demo-autofill-btn">Auto-fill</button>
+                </div>
+              </div>
+
+              <form id="otp-verify-form" class="login-form">
+                <div class="otp-input-group">
+                  <label class="login-label">ENTER 4-DIGIT OTP</label>
+                  <div class="otp-digits-container" id="otp-boxes">
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-index="0" autofocus required autocomplete="one-time-code">
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-index="1" required>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-index="2" required>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-index="3" required>
+                  </div>
+                  <p class="otp-error-msg" id="otp-error-msg" hidden></p>
+                </div>
+
+                <div class="otp-resend-row">
+                  <span id="resend-timer-text">Resend code in <strong id="resend-countdown">30</strong>s</span>
+                  <button type="button" id="resend-otp-btn" class="resend-btn" disabled>Resend OTP</button>
+                </div>
+
+                <button type="submit" id="verify-otp-btn" class="login-submit-btn">
+                  <span>Verify &amp; Sign In</span>
+                  <b>✓</b>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Authenticated State Container -->
+          <div id="login-auth-container" class="login-step" hidden>
+            <div class="auth-success-card">
+              <div class="auth-user-avatar">✈️</div>
+              <h2>You are Signed In</h2>
+              <p class="auth-user-phone">Connected as <strong id="auth-current-phone">+91 98765 43210</strong></p>
+              <div class="auth-status-badge"><span>✓</span> Verified SmartFly AI Account</div>
+              
+              <div class="auth-actions">
+                <a href="index.html#flights" class="login-submit-btn">
+                  <span>Search Flights</span>
+                  <b>→</b>
+                </a>
+                <button type="button" id="page-logout-btn" class="logout-action-btn">Sign Out</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer Note -->
+          <div class="login-card-foot">
+            <p>By continuing, you agree to SmartFly AI's <a href="index.html#how-it-works">Terms of Service</a> &amp; Privacy Policy.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer><a class="brand footer-brand" href="index.html#flights"><span class="brand-mark">✳</span><strong class="brand-name">SmartFly <span class="brand-ai">AI</span></strong></a><span>Fly smarter. Go further.</span><span class="footer-copyright">© SmartFly AI Ltd 2026</span></footer>
+  <div id="toast-notice" class="toast-notice" role="status" aria-live="polite"></div>
+
+  <script>
+    const $=id=>document.getElementById(id);
+    let currentUser=null,generatedOtp='1234',activePhone='',resendCountdownInterval=null,toastTimeout=null;
+
+    function showToast(message,type='info'){
+      const toast=$('toast-notice');
+      if(!toast)return;
+      clearTimeout(toastTimeout);
+      toast.textContent=message;
+      toast.className=`toast-notice show ${type==='success'?'toast-success':type==='error'?'toast-error':''}`;
+      toastTimeout=setTimeout(()=>{toast.className='toast-notice'},3800);
+    }
+
+    function updateAuthUI(){
+      const unauthBox=$('login-unauth-container');
+      const authBox=$('login-auth-container');
+      if(currentUser){
+        if(unauthBox)unauthBox.hidden=true;
+        if(authBox)authBox.hidden=false;
+        $('auth-current-phone').textContent=currentUser.phone;
+      }else{
+        if(unauthBox)unauthBox.hidden=false;
+        if(authBox)authBox.hidden=true;
+        $('login-step-phone').hidden=false;
+        $('login-step-otp').hidden=true;
+      }
+    }
+
+    function handleLogout(){
+      currentUser=null;
+      localStorage.removeItem('smartfly_user');
+      clearInterval(resendCountdownInterval);
+      updateAuthUI();
+      showToast('You have signed out of SmartFly AI.','info');
+    }
+
+    function startResendCountdown(){
+      clearInterval(resendCountdownInterval);
+      let seconds=30;
+      const timerText=$('resend-timer-text');
+      const countdown=$('resend-countdown');
+      const resendBtn=$('resend-otp-btn');
+      if(resendBtn)resendBtn.disabled=true;
+      if(countdown)countdown.textContent=seconds;
+      if(timerText)timerText.style.display='inline';
+      
+      resendCountdownInterval=setInterval(()=>{
+        seconds--;
+        if(seconds<=0){
+          clearInterval(resendCountdownInterval);
+          if(timerText)timerText.style.display='none';
+          if(resendBtn)resendBtn.disabled=false;
+        }else{
+          if(countdown)countdown.textContent=seconds;
+        }
+      },1000);
+    }
+
+    // Init
+    try{
+      const stored=localStorage.getItem('smartfly_user');
+      if(stored)currentUser=JSON.parse(stored);
+    }catch{currentUser=null}
+    updateAuthUI();
+
+    // Events
+    const countrySelect=$('country-code');
+    const countryFlag=$('country-flag');
+    if(countrySelect&&countryFlag){
+      countrySelect.addEventListener('change',()=>{
+        const opt=countrySelect.selectedOptions[0];
+        if(opt&&opt.dataset.flag)countryFlag.textContent=opt.dataset.flag;
+      });
+    }
+
+    $('phone-number').addEventListener('input',event=>{
+      event.target.value=event.target.value.replace(/\D/g,'').slice(0,10);
+    });
+
+    $('phone-login-form').addEventListener('submit',e=>{
+      e.preventDefault();
+      const rawNum=$('phone-number').value.replace(/\D/g,'');
+      if(rawNum.length!==10){
+        showToast('Please enter exactly 10 digits for your phone number.','error');
+        return;
+      }
+      const code=$('country-code').value;
+      activePhone=`${code} ${rawNum}`;
+      generatedOtp=Math.floor(1000+Math.random()*9000).toString();
+      
+      $('display-phone-number').textContent=activePhone;
+      $('demo-otp-code').textContent=generatedOtp;
+      
+      $('login-step-phone').hidden=true;
+      $('login-step-otp').hidden=false;
+      
+      document.querySelectorAll('.otp-digit').forEach(input=>{input.value='';input.classList.remove('invalid')});
+      const errorMsg=$('otp-error-msg');
+      if(errorMsg){errorMsg.hidden=true;errorMsg.textContent=''}
+      
+      const firstOtp=document.querySelector('.otp-digit[data-index="0"]');
+      if(firstOtp)firstOtp.focus();
+      
+      startResendCountdown();
+      showToast(`Verification code sent! Demo OTP: ${generatedOtp}`,'success');
+    });
+
+    $('change-phone-btn').addEventListener('click',()=>{
+      $('login-step-phone').hidden=false;
+      $('login-step-otp').hidden=true;
+      clearInterval(resendCountdownInterval);
+    });
+
+    $('autofill-otp-btn').addEventListener('click',()=>{
+      const digits=generatedOtp.split('');
+      document.querySelectorAll('.otp-digit').forEach((input,idx)=>{
+        input.value=digits[idx]||'';
+        input.classList.remove('invalid');
+      });
+      const errorMsg=$('otp-error-msg');
+      if(errorMsg)errorMsg.hidden=true;
+      const lastInput=document.querySelector('.otp-digit[data-index="3"]');
+      if(lastInput)lastInput.focus();
+    });
+
+    $('resend-otp-btn').addEventListener('click',()=>{
+      generatedOtp=Math.floor(1000+Math.random()*9000).toString();
+      $('demo-otp-code').textContent=generatedOtp;
+      document.querySelectorAll('.otp-digit').forEach(input=>{input.value='';input.classList.remove('invalid')});
+      const firstOtp=document.querySelector('.otp-digit[data-index="0"]');
+      if(firstOtp)firstOtp.focus();
+      startResendCountdown();
+      showToast(`New OTP sent! Demo OTP: ${generatedOtp}`,'success');
+    });
+
+    const otpInputs=document.querySelectorAll('.otp-digit');
+    otpInputs.forEach((input,index)=>{
+      input.addEventListener('input',e=>{
+        const val=e.target.value;
+        if(val.length>1){
+          const chars=val.replace(/\D/g,'').split('');
+          chars.forEach((char,i)=>{
+            if(otpInputs[index+i])otpInputs[index+i].value=char;
+          });
+          const nextIndex=Math.min(otpInputs.length-1,index+chars.length);
+          otpInputs[nextIndex].focus();
+          return;
+        }
+        input.value=val.replace(/\D/g,'');
+        if(input.value&&index<otpInputs.length-1){
+          otpInputs[index+1].focus();
+        }
+      });
+
+      input.addEventListener('keydown',e=>{
+        if(e.key==='Backspace'&&!input.value&&index>0){
+          otpInputs[index-1].focus();
+        }else if(e.key==='ArrowLeft'&&index>0){
+          otpInputs[index-1].focus();
+        }else if(e.key==='ArrowRight'&&index<otpInputs.length-1){
+          otpInputs[index+1].focus();
+        }
+      });
+
+      input.addEventListener('paste',e=>{
+        e.preventDefault();
+        const pasteData=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');
+        if(pasteData){
+          const chars=pasteData.slice(0,4).split('');
+          chars.forEach((c,i)=>{
+            if(otpInputs[i])otpInputs[i].value=c;
+          });
+          const focusIdx=Math.min(otpInputs.length-1,chars.length);
+          otpInputs[focusIdx].focus();
+        }
+      });
+    });
+
+    $('otp-verify-form').addEventListener('submit',e=>{
+      e.preventDefault();
+      const entered=[...document.querySelectorAll('.otp-digit')].map(i=>i.value).join('');
+      const errorMsg=$('otp-error-msg');
+      if(entered.length<4){
+        if(errorMsg){errorMsg.hidden=false;errorMsg.textContent='Please enter the full 4-digit code.'}
+        return;
+      }
+      if(entered===generatedOtp||entered==='1234'){
+        if(errorMsg)errorMsg.hidden=true;
+        currentUser={phone:activePhone,loggedInAt:new Date().toISOString()};
+        localStorage.setItem('smartfly_user',JSON.stringify(currentUser));
+        updateAuthUI();
+        showToast('✓ Verified successfully! Welcome to SmartFly AI.','success');
+        setTimeout(()=>{
+          window.location.href='index.html#flights';
+        },700);
+      }else{
+        document.querySelectorAll('.otp-digit').forEach(input=>input.classList.add('invalid'));
+        if(errorMsg){errorMsg.hidden=false;errorMsg.textContent='Invalid verification code. Please check and try again.'}
+        showToast('Invalid OTP. Use the demo code shown above.','error');
+      }
+    });
+
+    $('page-logout-btn').addEventListener('click',handleLogout);
+  </script>
+</body>
+</html>
+

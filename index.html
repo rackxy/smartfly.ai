@@ -1,0 +1,1103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071a2b">
+  <title>SmartFly AI — Find a better fare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    (function(){
+      try{
+        var user=localStorage.getItem('smartfly_user');
+        var guest=sessionStorage.getItem('smartfly_guest');
+        var p=new URLSearchParams(window.location.search);
+        if(p.get('guest')==='1'){
+          sessionStorage.setItem('smartfly_guest','1');
+          return;
+        }
+        if(!user&&!guest&&!window.location.hash.includes('connect-hotel')){
+          window.location.replace('login.html');
+        }
+      }catch(e){}
+    })();
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#flights" data-page-link="flights" aria-label="SmartFly AI flights"><span class="brand-mark">✳</span><strong class="brand-name">SmartFly <span class="brand-ai">AI</span></strong></a>
+    <nav aria-label="Main navigation"><a class="nav-active" href="#flights" data-page-link="flights" aria-current="page">Flights</a><a href="#stays" data-page-link="stays">Stays</a><a href="#how-it-works" data-page-link="how-it-works">How it works</a></nav>
+    <div class="topbar-right">
+      <a class="help-link" href="#flights" data-page-link="flights">✦ <span>Smart search</span></a>
+      <a class="login-top-btn" href="login.html" id="topbar-login-link">✦ Sign in</a>
+      <button type="button" class="connect-hotel-btn" id="topbar-connect-hotel-btn" aria-label="Connect your hotel"><span>🏨</span> Connect your hotel</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="search" data-main-page="flights">
+      <div class="hero-bg-overlay"></div>
+      <div class="hero-copy">
+        <div class="hero-badge">
+          <span class="badge-sparkle">✨</span>
+          <span>NEXT-GEN AI TRAVEL ENGINE • SAVE UP TO 40%</span>
+        </div>
+        <h1>Fly Smarter.<br>Experience <span class="hero-gradient-text">Extraordinary Places.</span></h1>
+        <p class="hero-subtext">Instant AI fare comparison across 500+ airlines, verified luxury stays, and transparent prices with zero hidden markups.</p>
+        
+        <div class="hero-stats-row">
+          <div class="hero-stat-pill">
+            <span class="stat-star">★ 4.9/5</span>
+            <span>120K+ Reviews</span>
+          </div>
+          <div class="hero-stat-pill">
+            <span>✈️ 500+ Airlines</span>
+          </div>
+          <div class="hero-stat-pill">
+            <span>🏨 25K+ Luxury Stays</span>
+          </div>
+          <div class="hero-stat-pill">
+            <span>🛡️ Best Fare Guarantee</span>
+          </div>
+        </div>
+
+        <div class="trending-routes-chips">
+          <span class="trending-lead">🔥 Popular Destinations:</span>
+          <button type="button" class="route-chip" data-dest="Goa" data-dest-code="GOI">🏖️ Goa <small>from ₹2,499</small></button>
+          <button type="button" class="route-chip" data-dest="Dubai" data-dest-code="DXB">🏙️ Dubai <small>from ₹14,899</small></button>
+          <button type="button" class="route-chip" data-dest="Srinagar" data-dest-code="SXR">❄️ Kashmir <small>from ₹4,199</small></button>
+          <button type="button" class="route-chip" data-dest="Kochi" data-dest-code="COK">🌴 Kerala <small>from ₹3,299</small></button>
+          <button type="button" class="route-chip" data-dest="Jaipur" data-dest-code="JAI">🏰 Jaipur <small>from ₹2,899</small></button>
+          <button type="button" class="route-chip" data-dest="Bali" data-dest-code="DPS">🌺 Bali <small>from ₹18,499</small></button>
+        </div>
+      </div>
+
+      <form class="search-card" id="flight-form">
+        <div class="trip-tabs" role="group" aria-label="Trip type">
+          <button class="trip-tab selected" type="button" data-trip="round">✈️ Round trip</button>
+          <button class="trip-tab" type="button" data-trip="oneway">🛫 One way</button>
+        </div>
+        <div class="fields">
+          <label class="field"><span>FROM</span><div class="input-wrap"><span class="field-icon">↗</span><input id="origin" list="flight-locations" value="Delhi" autocomplete="off" placeholder="City or airport" required><small id="origin-code">DEL</small></div></label>
+          <button class="swap" id="swap" type="button" aria-label="Swap origin and destination">⇄</button>
+          <label class="field"><span>TO</span><div class="input-wrap"><span class="field-icon">↘</span><input id="destination" list="flight-locations" value="Mumbai" autocomplete="off" placeholder="City or airport" required><small id="destination-code">BOM</small></div></label>
+          <label class="field date-field"><span>DEPARTURE</span><div class="input-wrap"><span class="field-icon">▦</span><input id="depart" type="date" required></div></label>
+          <label class="field date-field" id="return-field"><span>RETURN</span><div class="input-wrap"><span class="field-icon">▦</span><input id="return" type="date"></div></label>
+          <label class="field travelers-field"><span>TRAVELERS</span><div class="input-wrap"><span class="field-icon">♙</span><select id="travelers"><option value="1">1 traveler</option><option value="2">2 travelers</option><option value="3">3 travelers</option><option value="4">4 travelers</option><option value="5">5 travelers</option><option value="6">6 travelers</option></select></div></label>
+          <label class="field cabin-field"><span>CABIN CLASS</span><div class="input-wrap"><span class="field-icon">✦</span><select id="cabin"><option value="economy">Economy</option><option value="premium">Premium economy</option><option value="business">Business</option><option value="first">First class</option></select></div></label>          
+        </div>
+        <div class="search-extras">
+          <label><input id="nearby-airports" type="checkbox"> Include nearby airports</label>
+          <label><input id="flexible-dates" type="checkbox"> Flexible dates ±3 days</label>
+          <span class="search-promo-hint">✨ <strong>15% Off</strong> with code SMARTFLY15</span>
+        </div>
+        <div class="form-bottom">
+          <span class="secure-note"><span>✓</span> Instant verified airline fares · Zero credit card surcharges</span>
+          <button class="search-button" type="submit"><span>⌕</span> Compare &amp; Save Fares <b>→</b></button>
+        </div>
+        <datalist id="flight-locations">
+          <option value="Delhi" label="Delhi, Delhi · India"></option><option value="Mumbai" label="Maharashtra · India"></option><option value="Visakhapatnam" label="Andhra Pradesh · India"></option><option value="Itanagar" label="Arunachal Pradesh · India"></option><option value="Guwahati" label="Assam · India"></option><option value="Patna" label="Bihar · India"></option><option value="Raipur" label="Chhattisgarh · India"></option><option value="Panaji" label="Goa · India"></option><option value="Ahmedabad" label="Gujarat · India"></option><option value="Chandigarh" label="Haryana / Punjab · India"></option><option value="Shimla" label="Himachal Pradesh · India"></option><option value="Ranchi" label="Jharkhand · India"></option><option value="Bengaluru" label="Karnataka · India"></option><option value="Kochi" label="Kerala · India"></option><option value="Bhopal" label="Madhya Pradesh · India"></option><option value="Imphal" label="Manipur · India"></option><option value="Shillong" label="Meghalaya · India"></option><option value="Aizawl" label="Mizoram · India"></option><option value="Kohima" label="Nagaland · India"></option><option value="Bhubaneswar" label="Odisha · India"></option><option value="Jaipur" label="Rajasthan · India"></option><option value="Gangtok" label="Sikkim · India"></option><option value="Chennai" label="Tamil Nadu · India"></option><option value="Hyderabad" label="Telangana · India"></option><option value="Agartala" label="Tripura · India"></option><option value="Lucknow" label="Uttar Pradesh · India"></option><option value="Dehradun" label="Uttarakhand · India"></option><option value="Kolkata" label="West Bengal · India"></option><option value="Port Blair" label="Andaman and Nicobar Islands · India"></option><option value="Daman" label="Dadra and Nagar Haveli and Daman and Diu · India"></option><option value="Srinagar" label="Jammu and Kashmir · India"></option><option value="Leh" label="Ladakh · India"></option><option value="Kavaratti" label="Lakshadweep · India"></option><option value="Puducherry" label="Puducherry · India"></option>
+          <option value="Amritsar" label="Punjab · India"></option><option value="Jammu" label="Jammu and Kashmir · India"></option><option value="Varanasi" label="Uttar Pradesh · India"></option><option value="Ayodhya" label="Uttar Pradesh · India"></option><option value="Prayagraj" label="Uttar Pradesh · India"></option><option value="Agra" label="Uttar Pradesh · India"></option><option value="Gaya" label="Bihar · India"></option><option value="Darbhanga" label="Bihar · India"></option><option value="Bagdogra" label="West Bengal · India"></option><option value="Dibrugarh" label="Assam · India"></option><option value="Silchar" label="Assam · India"></option><option value="Dimapur" label="Nagaland · India"></option><option value="Lilabari" label="Assam · India"></option><option value="Jodhpur" label="Rajasthan · India"></option><option value="Udaipur" label="Rajasthan · India"></option><option value="Jaisalmer" label="Rajasthan · India"></option><option value="Bikaner" label="Rajasthan · India"></option><option value="Indore" label="Madhya Pradesh · India"></option><option value="Jabalpur" label="Madhya Pradesh · India"></option><option value="Gwalior" label="Madhya Pradesh · India"></option><option value="Nagpur" label="Maharashtra · India"></option><option value="Nashik" label="Maharashtra · India"></option><option value="Aurangabad" label="Maharashtra · India"></option><option value="Surat" label="Gujarat · India"></option><option value="Rajkot" label="Gujarat · India"></option><option value="Mangaluru" label="Karnataka · India"></option><option value="Hubballi" label="Karnataka · India"></option><option value="Kannur" label="Kerala · India"></option><option value="Kozhikode" label="Kerala · India"></option><option value="Coimbatore" label="Tamil Nadu · India"></option><option value="Madurai" label="Tamil Nadu · India"></option><option value="Tiruchirappalli" label="Tamil Nadu · India"></option><option value="Vijayawada" label="Andhra Pradesh · India"></option><option value="Tirupati" label="Andhra Pradesh · India"></option><option value="Rajahmundry" label="Andhra Pradesh · India"></option><option value="Mopa" label="Goa · India"></option><option value="Dabolim" label="Goa · India"></option>
+          <option value="New York" label="United States"></option><option value="London" label="United Kingdom"></option><option value="Toronto" label="Canada"></option><option value="Sydney" label="Australia"></option><option value="Auckland" label="New Zealand"></option><option value="Dubai" label="United Arab Emirates"></option><option value="Singapore" label="Singapore"></option><option value="Paris" label="France"></option><option value="Berlin" label="Germany"></option><option value="Rome" label="Italy"></option><option value="Madrid" label="Spain"></option><option value="Amsterdam" label="Netherlands"></option><option value="Zurich" label="Switzerland"></option><option value="Tokyo" label="Japan"></option><option value="Seoul" label="South Korea"></option><option value="Bangkok" label="Thailand"></option><option value="Kuala Lumpur" label="Malaysia"></option><option value="Jakarta" label="Indonesia"></option><option value="Manila" label="Philippines"></option><option value="Colombo" label="Sri Lanka"></option><option value="Kathmandu" label="Nepal"></option><option value="Dhaka" label="Bangladesh"></option><option value="Karachi" label="Pakistan"></option><option value="Doha" label="Qatar"></option><option value="Riyadh" label="Saudi Arabia"></option><option value="Istanbul" label="Türkiye"></option><option value="Cairo" label="Egypt"></option><option value="Nairobi" label="Kenya"></option><option value="Johannesburg" label="South Africa"></option><option value="Sao Paulo" label="Brazil"></option><option value="Mexico City" label="Mexico"></option><option value="Buenos Aires" label="Argentina"></option>
+        </datalist>
+      </form>
+      <p class="flight-search-status" id="flight-search-status" aria-live="polite"></p>
+
+      <!-- Festive Offer Strip -->
+      <div class="home-promo-strip">
+        <div class="promo-card-glow">
+          <div class="promo-badge">🎉 FESTIVE SMART SAVINGS</div>
+          <div class="promo-content">
+            <strong>Get Flat 15% OFF on Flights &amp; Handpicked Partner Stays</strong>
+            <p>Use code <span class="coupon-code">SMARTFLY15</span> at checkout • Valid for travels booked this week</p>
+          </div>
+          <button type="button" class="promo-claim-btn" id="claim-festive-btn">Apply 15% Off <b>→</b></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trending Destinations Section -->
+    <section class="trending-destinations-section">
+      <div class="section-title-wrap">
+        <div class="eyebrow dark-eyebrow">EXPLORE THE EXTRAORDINARY</div>
+        <h2>Trending Destinations for Your Next Getaway</h2>
+        <p>Curated holiday hotspots with lowest AI fares, verified stays, and direct partner rates.</p>
+      </div>
+      <div class="destination-grid">
+        <!-- Card 1: Goa -->
+        <article class="dest-card" data-explore-dest="Goa" data-explore-code="GOI">
+          <div class="dest-img-wrap">
+            <img src="https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=640&q=80" alt="Goa Beaches" loading="lazy">
+            <span class="dest-badge">🏖️ Beach &amp; Sunsets</span>
+            <span class="dest-deal-tag">Save 35%</span>
+          </div>
+          <div class="dest-info">
+            <div class="dest-top">
+              <h3>Goa, India</h3>
+              <span class="dest-fare">from ₹2,499</span>
+            </div>
+            <p>Golden palm-fringed beaches, heritage Portuguese villas &amp; coastal cuisine.</p>
+            <button type="button" class="dest-book-btn">Explore Fares &amp; Stays →</button>
+          </div>
+        </article>
+
+        <!-- Card 2: Srinagar Kashmir -->
+        <article class="dest-card" data-explore-dest="Srinagar" data-explore-code="SXR">
+          <div class="dest-img-wrap">
+            <img src="https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=640&q=80" alt="Srinagar Kashmir" loading="lazy">
+            <span class="dest-badge">❄️ Snow &amp; Valleys</span>
+            <span class="dest-deal-tag">Top Rated</span>
+          </div>
+          <div class="dest-info">
+            <div class="dest-top">
+              <h3>Srinagar, Kashmir</h3>
+              <span class="dest-fare">from ₹4,199</span>
+            </div>
+            <p>Peaceful Dal Lake shikara rides, snow peaks &amp; traditional wooden houseboats.</p>
+            <button type="button" class="dest-book-btn">Explore Fares &amp; Stays →</button>
+          </div>
+        </article>
+
+        <!-- Card 3: Dubai -->
+        <article class="dest-card" data-explore-dest="Dubai" data-explore-code="DXB">
+          <div class="dest-img-wrap">
+            <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=640&q=80" alt="Dubai Skyline" loading="lazy">
+            <span class="dest-badge">🏙️ Luxury &amp; Safari</span>
+            <span class="dest-deal-tag">AI Pick</span>
+          </div>
+          <div class="dest-info">
+            <div class="dest-top">
+              <h3>Dubai, UAE</h3>
+              <span class="dest-fare">from ₹14,899</span>
+            </div>
+            <p>Burj Khalifa views, desert dune thrills, world-class dining &amp; waterfront luxury.</p>
+            <button type="button" class="dest-book-btn">Explore Fares &amp; Stays →</button>
+          </div>
+        </article>
+
+        <!-- Card 4: Jaipur -->
+        <article class="dest-card" data-explore-dest="Jaipur" data-explore-code="JAI">
+          <div class="dest-img-wrap">
+            <img src="https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=640&q=80" alt="Jaipur Palace" loading="lazy">
+            <span class="dest-badge">🏰 Royal Heritage</span>
+            <span class="dest-deal-tag">Weekend Pick</span>
+          </div>
+          <div class="dest-info">
+            <div class="dest-top">
+              <h3>Jaipur, Rajasthan</h3>
+              <span class="dest-fare">from ₹2,899</span>
+            </div>
+            <p>The Pink City splendor, grand Amer Fort, royal havelis &amp; rich Rajasthani culture.</p>
+            <button type="button" class="dest-book-btn">Explore Fares &amp; Stays →</button>
+          </div>
+        </article>
+
+        <!-- Card 5: Kochi Kerala -->
+        <article class="dest-card" data-explore-dest="Kochi" data-explore-code="COK">
+          <div class="dest-img-wrap">
+            <img src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=640&q=80" alt="Kerala Backwaters" loading="lazy">
+            <span class="dest-badge">🌴 Backwaters &amp; Spas</span>
+            <span class="dest-deal-tag">Wellness</span>
+          </div>
+          <div class="dest-info">
+            <div class="dest-top">
+              <h3>Kochi, Kerala</h3>
+              <span class="dest-fare">from ₹3,299</span>
+            </div>
+            <p>Tranquil backwater canals, lush spice gardens, beach sunsets &amp; Ayurvedic stays.</p>
+            <button type="button" class="dest-book-btn">Explore Fares &amp; Stays →</button>
+          </div>
+        </article>
+
+        <!-- Card 6: Bali -->
+        <article class="dest-card" data-explore-dest="Bali" data-explore-code="DPS">
+          <div class="dest-img-wrap">
+            <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=640&q=80" alt="Bali Paradise" loading="lazy">
+            <span class="dest-badge">🌺 Tropical Retreat</span>
+            <span class="dest-deal-tag">International</span>
+          </div>
+          <div class="dest-info">
+            <div class="dest-top">
+              <h3>Bali, Indonesia</h3>
+              <span class="dest-fare">from ₹18,499</span>
+            </div>
+            <p>Emerald rice terraces, clifftop ocean temples, lush waterfalls &amp; infinity pools.</p>
+            <button type="button" class="dest-book-btn">Explore Fares &amp; Stays →</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="results-section" id="results" aria-live="polite">
+      <div class="results-heading"><div><div class="eyebrow dark-eyebrow">YOUR OPTIONS</div><h2 id="results-title">SmartFly AI fares from Delhi to Mumbai</h2><p id="results-subtitle">Illustrative prices for comparison; lowest example fare first.</p></div><div class="result-actions"><label class="sort-box"><span>Sort by</span><select id="sort"><option value="price">Lowest price</option><option value="duration">Shortest duration</option></select></label></div></div>
+      <div class="notice" id="flight-notice"><span class="notice-icon">i</span><span id="flight-notice-copy"><b>SmartFly AI price preview</b> — </span><button id="dismiss-notice" aria-label="Dismiss">×</button></div>
+      <div class="filter-bar" aria-label="Filter flights"><strong>Filter by</strong><label>Stops <select id="stops-filter"><option value="all">Any number</option><option value="Nonstop">Nonstop</option><option value="1 stop">1 stop</option><option value="2+ stops">2+ stops</option></select></label><label>Airline <select id="airline-filter"><option value="all">All airlines</option></select></label><button id="clear-filters" type="button">Clear filters</button><span id="result-count" aria-live="polite"></span></div>
+<section class="match-panel" aria-labelledby="match-title">
+        <div class="match-copy"><span class="match-icon">✦</span><div><h3 id="match-title">Find your best-fit flight</h3><p id="match-summary">The lowest illustrative airline price will be highlighted after search.</p></div></div>
+        <div class="match-controls" role="group" aria-label="Choose your flight priority">
+          <button type="button" class="match-option active" data-priority="price">✦ Lowest price</button>
+          <button type="button" class="match-option" data-priority="time">◷ Less travel time</button>
+          <button type="button" class="match-option" data-priority="stops">↗ Fewer stops</button>
+        </div>
+      </section>
+      <div id="airline-price-comparison" class="airline-price-comparison" hidden aria-live="polite"></div>
+      <div class="result-list" id="result-list"></div>
+      <section class="hotel-discovery" aria-labelledby="hotel-title">
+        <!-- Stays Atmospheric Hero -->
+        <div class="stays-hero-header">
+          <div class="stays-hero-tag">
+            <span class="sparkle">✨</span>
+            <span>HANDPICKED LUXURY RETREATS &amp; VERIFIED PARTNER STAYS</span>
+          </div>
+          <h2 id="hotel-title" class="stays-main-title">Find Extraordinary Places to Stay</h2>
+          <p class="stays-sub-title">From iconic 5-star beachfront villas to royal heritage palace suites — enjoy direct partner rates, verified guest reviews, and flexible cancellation.</p>
+          
+          <!-- Quick Destination Pills -->
+          <div class="stays-quick-chips" role="group" aria-label="Popular stay destinations">
+            <span class="quick-chip-label">Popular Getaways:</span>
+            <button type="button" class="stay-chip active" data-dest="Mumbai" data-state="Maharashtra">🌆 Mumbai Sea View</button>
+            <button type="button" class="stay-chip" data-dest="Goa" data-state="Goa">🌴 Goa Beachfront</button>
+            <button type="button" class="stay-chip" data-dest="Jaipur" data-state="Rajasthan">🏰 Jaipur Heritage</button>
+            <button type="button" class="stay-chip" data-dest="Srinagar" data-state="Himachal Pradesh">🏔️ Kashmir Valley</button>
+            <button type="button" class="stay-chip" data-dest="Kochi" data-state="Kerala">🌊 Kerala Backwaters</button>
+            <button type="button" class="stay-chip" data-dest="Bengaluru" data-state="Karnataka">🌿 Garden Luxury</button>
+          </div>
+        </div>
+
+        <!-- Modern Stays Search Card -->
+        <div class="stays-search-card">
+          <form class="hotel-search-form" id="hotel-search-form">
+            <div class="hotel-form-row">
+              <label class="hotel-field hotel-destination-field">
+                <span class="field-icon">📍</span>
+                <span class="field-label">DESTINATION / CITY</span>
+                <input id="hotel-destination" list="flight-locations" value="Mumbai" placeholder="City or hotel name" required>
+              </label>
+
+              <label class="hotel-field">
+                <span class="field-icon">🗺️</span>
+                <span class="field-label">INDIAN STATE</span>
+                <select id="hotel-state" required>
+                  <option>Andhra Pradesh</option>
+                  <option>Arunachal Pradesh</option>
+                  <option>Assam</option>
+                  <option>Bihar</option>
+                  <option>Chhattisgarh</option>
+                  <option>Goa</option>
+                  <option>Gujarat</option>
+                  <option>Haryana</option>
+                  <option>Himachal Pradesh</option>
+                  <option>Jharkhand</option>
+                  <option>Karnataka</option>
+                  <option>Kerala</option>
+                  <option>Madhya Pradesh</option>
+                  <option selected>Maharashtra</option>
+                  <option>Manipur</option>
+                  <option>Meghalaya</option>
+                  <option>Mizoram</option>
+                  <option>Nagaland</option>
+                  <option>Odisha</option>
+                  <option>Punjab</option>
+                  <option>Rajasthan</option>
+                  <option>Sikkim</option>
+                  <option>Tamil Nadu</option>
+                  <option>Telangana</option>
+                  <option>Tripura</option>
+                  <option>Uttar Pradesh</option>
+                  <option>Uttarakhand</option>
+                  <option>West Bengal</option>
+                </select>
+              </label>
+
+              <label class="hotel-field">
+                <span class="field-icon">📅</span>
+                <span class="field-label">CHECK-IN</span>
+                <input id="hotel-checkin" type="date" required>
+              </label>
+
+              <label class="hotel-field">
+                <span class="field-icon">📅</span>
+                <span class="field-label">CHECK-OUT</span>
+                <input id="hotel-checkout" type="date" required>
+              </label>
+
+              <label class="hotel-field hotel-select-field">
+                <span class="field-icon">👥</span>
+                <span class="field-label">GUESTS</span>
+                <select id="hotel-adults">
+                  <option value="1">1 Adult</option>
+                  <option value="2" selected>2 Adults</option>
+                  <option value="3">3 Adults</option>
+                  <option value="4">4 Adults</option>
+                  <option value="5">5 Adults</option>
+                  <option value="6">6 Adults</option>
+                </select>
+              </label>
+
+              <label class="hotel-field hotel-select-field">
+                <span class="field-icon">🚪</span>
+                <span class="field-label">ROOMS</span>
+                <select id="hotel-rooms">
+                  <option value="1" selected>1 Room</option>
+                  <option value="2">2 Rooms</option>
+                  <option value="3">3 Rooms</option>
+                  <option value="4">4 Rooms</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="hotel-search-actions">
+              <button type="submit" class="hotel-search-submit-btn">
+                <span>🔍 Search Available Stays</span>
+              </button>
+              <button type="button" class="hotel-demo-button" id="hotel-demo-preview">
+                <span>🏨 Show Partner Stays</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Stays Trust & Guarantee Strip -->
+        <div class="stays-trust-strip">
+          <div class="stay-trust-item">
+            <span class="trust-icon">🛡️</span>
+            <div>
+              <strong>Best Price Assurance</strong>
+              <small>Guaranteed direct partner rates</small>
+            </div>
+          </div>
+          <div class="stay-trust-item">
+            <span class="trust-icon">🛎️</span>
+            <div>
+              <strong>Verified Clean Stays</strong>
+              <small>4.5+ star hygiene &amp; hospitality</small>
+            </div>
+          </div>
+          <div class="stay-trust-item">
+            <span class="trust-icon">⚡</span>
+            <div>
+              <strong>Instant Confirmation</strong>
+              <small>E-voucher on SMS &amp; WhatsApp</small>
+            </div>
+          </div>
+          <div class="stay-trust-item">
+            <span class="trust-icon">🔄</span>
+            <div>
+              <strong>Free Cancellation</strong>
+              <small>Zero penalty on flexible stays</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Tools Bar -->
+        <div class="hotel-tools">
+          <div class="hotel-heading-compact">
+            <p id="hotel-results-summary">Showing luxury stays &amp; partner properties</p>
+            <span class="hotel-provider-label"><i></i> Direct Partner &amp; Amadeus Stays</span>
+          </div>
+          <div class="hotel-tools-right">
+            <div class="hotel-pills" role="group" aria-label="Hotel recommendation priority">
+              <button class="hotel-priority active" data-hotel-priority="value">Best value</button>
+              <button class="hotel-priority" data-hotel-priority="review">Top rated</button>
+              <button class="hotel-priority" data-hotel-priority="location">Best location</button>
+            </div>
+            <div class="hotel-filters">
+              <label>Stay needs 
+                <select id="hotel-filter">
+                  <option value="all">All stays</option>
+                  <option value="free">Free cancellation</option>
+                  <option value="breakfast">Breakfast included</option>
+                </select>
+              </label>
+              <label>Max total 
+                <select id="hotel-budget-filter">
+                  <option value="all">Any budget</option>
+                  <option value="50000">₹50,000</option>
+                  <option value="75000">₹75,000</option>
+                  <option value="100000">₹1,00,000</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
+        <p class="hotel-api-status" id="hotel-api-status" aria-live="polite">Browse curated luxury stays with verified amenities and instant confirmation.</p>
+
+        <!-- Hotels List Grid -->
+        <div class="hotel-layout">
+          <div class="hotel-list" id="hotel-list" aria-live="polite"></div>
+          <aside class="hotel-map" aria-label="Provider hotel locations" hidden></aside>
+        </div>
+
+        <!-- Hoteliers Partner Banner -->
+        <div class="stays-partner-banner">
+          <div class="partner-banner-content">
+            <span class="partner-badge">SMARTFLY PARTNER NETWORK</span>
+            <h3>Are you a Hotelier, Villa Owner, or Resort Host?</h3>
+            <p>Connect your property directly to SmartFly AI. Enjoy 0% commission for the first 90 days, real-time availability sync, and verified direct guest reservations.</p>
+          </div>
+          <button type="button" class="partner-banner-cta" id="stays-connect-hotel-btn">
+            <span>🏨 Connect Your Hotel →</span>
+          </button>
+        </div>
+      </section>
+      <section class="trip-budget" aria-labelledby="budget-title"><div><div class="eyebrow dark-eyebrow">PLAN THE WHOLE TRIP</div><h3 id="budget-title">Flight + stay estimate</h3><p id="trip-budget-copy">Search SmartFly AI flight prices and a hotel for an illustrative trip estimate.</p></div><div class="budget-total" id="trip-total"></div></section><section class="price-history" aria-labelledby="history-title"><div><h3 id="history-title">Illustrative three-month price guide</h3><p id="price-outlook-copy">Example price points for three departure windows. These are generated examples, not real fare predictions.</p><p id="history-copy">Sample fare points are generated locally and are not market data.</p></div><div id="history-chart" class="history-chart" aria-label="Illustrative price examples"></div></section>
+      
+      <div class="results-foot"><span>Illustrative SmartFly AI prices only. No live fare search or booking is connected.</span><span class="updated"><i></i> SmartFly AI price examples</span></div>
+    </section>
+
+    <!-- Smart Features / How It Works -->
+    <section class="smart-features-section" id="how-it-works">
+      <div class="section-title-wrap">
+        <div class="eyebrow dark-eyebrow">INTELLIGENT TRAVEL ENGINE</div>
+        <h2>Why Millions of Travelers Fly with SmartFly AI</h2>
+        <p>Our algorithms compare millions of price points in milliseconds to unlock real travel savings.</p>
+      </div>
+      <div class="smart-features-grid">
+        <div class="smart-feature-card">
+          <div class="feature-icon-badge cyan">⚡</div>
+          <h3>Real-Time AI Fare Engine</h3>
+          <p>Scans IndiGo, Air India, SpiceJet, Akasa Air, and global airlines to pinpoint the lowest verified fare instantly.</p>
+          <span class="feature-pill">✦ 500+ Airlines Indexed</span>
+        </div>
+
+        <div class="smart-feature-card">
+          <div class="feature-icon-badge amber">🏨</div>
+          <h3>Direct Hotel Partner Rates</h3>
+          <p>Hoteliers connect directly to SmartFly with zero middleman fees, passing 15%–35% room discounts directly to you.</p>
+          <span class="feature-pill">✦ Verified Partner Properties</span>
+        </div>
+
+        <div class="smart-feature-card">
+          <div class="feature-icon-badge green">🛡️</div>
+          <h3>100% Transparent Checkout</h3>
+          <p>What you see is what you pay. Zero surprise convenience fees, hidden seat surcharges, or forced markups.</p>
+          <span class="feature-pill">✦ Zero Hidden Markups</span>
+        </div>
+
+        <div class="smart-feature-card">
+          <div class="feature-icon-badge purple">📱</div>
+          <h3>Instant E-Tickets &amp; Sync</h3>
+          <p>One-click checkout, instant downloadable PDF tickets, real-time gate notifications, and 24/7 travel concierge.</p>
+          <span class="feature-pill">✦ 60-Second Booking Flow</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social Proof / Testimonials -->
+    <section class="testimonials-section">
+      <div class="section-title-wrap">
+        <div class="eyebrow dark-eyebrow">TRUSTED BY TRAVELERS WORLDWIDE</div>
+        <h2>Loved by 2.4 Million+ Smart Flyers</h2>
+        <p>Real stories from travelers who unlocked dream journeys for less with SmartFly AI.</p>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Saved ₹8,400 on our family holiday to Dubai! The AI fare comparison caught a price drop on Air India that no other app showed. Seamless and delightfully fast."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">PS</div>
+            <div>
+              <strong>Priya &amp; Amit Sharma</strong>
+              <small>Bengaluru • Vacation to Dubai</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"I used the 'Connect your hotel' feature for my boutique villa in Goa. Within hours I started receiving direct verified guest bookings. Phenomenal platform!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:#e8f5ec;color:#0e7a66">RM</div>
+            <div>
+              <strong>Rohan Mehta</strong>
+              <small>Goa • Hotel Partner &amp; Frequent Flyer</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"The flight + stay combination estimate is a game-changer. Planned our entire Kashmir anniversary trip in under 5 minutes without opening ten different tabs."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:#fef3e2;color:#925d19">AR</div>
+            <div>
+              <strong>Ananya Roy</strong>
+              <small>New Delhi • Trip to Srinagar</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust & Guarantee Bar -->
+    <div class="trust-guarantee-strip">
+      <div class="trust-item">
+        <span class="trust-icon">🛡️</span>
+        <div>
+          <strong>Best Fare Assurance</strong>
+          <small>Continuous AI price monitoring</small>
+        </div>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">🔄</span>
+        <div>
+          <strong>Flexible Stays</strong>
+          <small>Free cancellation stays available</small>
+        </div>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">⚡</span>
+        <div>
+          <strong>Instant Confirmation</strong>
+          <small>Official ticket in under 60 seconds</small>
+        </div>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">🔒</span>
+        <div>
+          <strong>256-Bit SSL Security</strong>
+          <small>Bank-grade encrypted payments</small>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer><a class="brand footer-brand" href="#"><span class="brand-mark">✳</span><strong class="brand-name">SmartFly <span class="brand-ai">AI</span></strong></a><span>Fly smarter. Go further.</span><span class="footer-copyright">© SmartFly AI Ltd 2026</span></footer>
+  <dialog id="passenger-details-modal" class="passenger-details-modal">
+    <button type="button" id="passenger-close" class="demo-book-close" aria-label="Close">×</button>
+    
+    <!-- Step Progress Indicator -->
+    <div class="checkout-step-progress">
+      <div class="step-item active">
+        <span class="step-num">1</span>
+        <span class="step-text">Passenger Info</span>
+      </div>
+      <div class="step-connector active"></div>
+      <div class="step-item">
+        <span class="step-num">2</span>
+        <span class="step-text">Fare Review</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item">
+        <span class="step-num">3</span>
+        <span class="step-text">Payment</span>
+      </div>
+    </div>
+
+    <div class="passenger-modal-header">
+      <div class="eyebrow dark-eyebrow">PASSENGER DETAILS &amp; BOOKING REVIEW</div>
+      <h2 id="passenger-form-title">Passenger details for your trip</h2>
+    </div>
+
+    <!-- Rich Trip Summary Card -->
+    <div id="passenger-trip-summary" class="checkout-trip-summary-wrap"></div>
+
+    <!-- Total Price & Coupon Box -->
+    <div id="passenger-total-box" class="passenger-total-box"></div>
+    
+    <div id="welcome-offer-box" class="welcome-offer-box">
+      <div class="welcome-offer-copy">
+        <span class="offer-pill">PROMO CODE</span>
+        <strong>10% OFF on your first SmartFly AI booking</strong>
+      </div>
+      <button type="button" id="welcome-apply-button" class="welcome-apply-btn">Apply Offer</button>
+    </div>
+    
+    <div id="welcome-offer-applied" class="welcome-offer-success" hidden>
+      <div id="welcome-offer-message" class="welcome-offer-msg"></div>
+      <button type="button" id="welcome-remove-button" class="welcome-remove-button">Remove</button>
+    </div>
+
+    <form id="passenger-form" class="passenger-form">
+      <div id="passenger-traveler-list" class="traveler-details-list"></div>
+      
+      <div class="passenger-contact-section">
+        <span class="section-label">BOOKING CONTACT &amp; E-TICKET NOTIFICATIONS</span>
+        <div class="passenger-grid">
+          <label class="checkout-field">
+            <span class="field-title"><span>✉️</span> Booking contact email</span>
+            <input id="passenger-email" type="email" placeholder="name@email.com" required>
+          </label>
+          <label class="checkout-field">
+            <span class="field-title"><span>📱</span> Mobile Number</span>
+            <div class="input-with-prefix">
+              <span class="phone-prefix">+91</span>
+              <input id="passenger-phone" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit number" title="Enter exactly 10 digits" required>
+            </div>
+          </label>
+          <label class="checkout-field">
+            <span class="field-title"><span>👥</span> Total Travelers</span>
+            <select id="passenger-travelers">
+              <option value="1">1 traveler</option>
+              <option value="2">2 travelers</option>
+              <option value="3">3 travelers</option>
+              <option value="4">4 travelers</option>
+              <option value="5">5 travelers</option>
+              <option value="6">6 travelers</option>
+            </select>
+          </label>
+        </div>
+
+        <!-- WhatsApp Ticket Opt-in -->
+        <label class="whatsapp-optin-card">
+          <input type="checkbox" id="passenger-whatsapp-optin" checked>
+          <span class="custom-checkbox">✓</span>
+          <div class="optin-copy">
+            <strong>📲 Send Instant E-Tickets &amp; Boarding Pass to WhatsApp</strong>
+            <small>Receive gate changes, delay alerts, and PDF voucher directly on your mobile</small>
+          </div>
+        </label>
+      </div>
+
+      <!-- Trust Badges Strip -->
+      <div class="checkout-trust-badges">
+        <div class="badge-item"><span>🔒</span> 256-Bit SSL Encrypted</div>
+        <div class="badge-item"><span>⚡</span> 60s Instant Confirmation</div>
+        <div class="badge-item"><span>🛡️</span> Zero Hidden Markups</div>
+      </div>
+
+      <div class="passenger-actions">
+        <button type="button" id="passenger-back" class="secondary-button checkout-back-btn">← Back to Results</button>
+        <button type="submit" class="book-button checkout-proceed-btn">
+          <span>Continue to Trip Review</span>
+          <b>→</b>
+        </button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="demo-booking-modal" class="demo-booking-modal">
+    <button type="button" id="demo-book-cancel" class="demo-book-close" aria-label="Close">×</button>
+    <p class="eyebrow dark-eyebrow">SMARTFLY BOOKING PREVIEW</p>
+    <h2 id="demo-booking-title">Review SmartFly AI booking</h2>
+    <p id="demo-booking-summary"></p>
+    <p id="demo-booking-result" aria-live="polite"></p>
+    <button type="button" id="demo-book-confirm" class="book-button" data-requires-auth="true">Proceed to payment</button>
+  </dialog>
+
+  <dialog id="payment-modal" class="payment-modal">
+    <button type="button" id="payment-close" class="demo-book-close" aria-label="Close">×</button>
+    <p class="eyebrow dark-eyebrow">PAYMENT</p>
+    <h2>Choose payment method</h2>
+    <div class="payment-methods">
+      <button type="button" class="payment-option selected" data-payment-method="gpay"><img class="payment-brand-icon gpay-icon" src="https://cdn.simpleicons.org/googlepay/4285F4" alt=""> <span>Google Pay</span></button>
+      <button type="button" class="payment-option" data-payment-method="phonepe"><img class="payment-brand-icon phonepe-icon" src="https://cdn.simpleicons.org/phonepe/5F259F" alt=""> <span>PhonePe</span></button>
+      <button type="button" class="payment-option" data-payment-method="paytm"><img class="payment-brand-icon paytm-icon" src="https://cdn.simpleicons.org/paytm/00BAF2" alt=""> <span>Paytm</span></button>
+      <button type="button" class="payment-option" data-payment-method="upi">UPI ID</button>
+      <button type="button" class="payment-option" data-payment-method="bank">🏦 Bank</button>
+    </div>
+    <div id="payment-method-form" class="payment-form-body"></div>
+    <div id="payment-status" class="payment-status" aria-live="polite"></div>
+    <button type="button" id="verify-payment" class="book-button">Verify payment</button>
+  </dialog>
+
+  <dialog id="ticket-modal" class="ticket-modal">
+    <div style="display:flex;justify-content:center;margin-bottom:12px;">
+      <div style="display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:8px 14px;border:1px solid #dfeef0;border-radius:12px;background:#f4fbf9;box-shadow:0 8px 20px #dbece8;">
+        <span class="brand-mark" style="display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:linear-gradient(145deg,#11a4a0,#087078);color:#fff;font-size:19px;box-shadow:0 5px 14px #0b85804a;">✳</span>
+        <strong class="brand-name" style="font-size:18px;font-weight:800;letter-spacing:-.8px;color:#17333c;">SmartFly <span style="color:#0b8883;">AI</span></strong>
+      </div>
+    </div>
+    <p class="eyebrow dark-eyebrow">BOOKING CONFIRMED</p>
+    <h2>Your ticket has been booked</h2>
+    <div class="ticket-card">
+      <div class="ticket-row">
+        <span class="ticket-label">Booking reference</span>
+        <strong id="ticket-reference"></strong>
+      </div>
+      <div class="ticket-row">
+        <span class="ticket-label">Passenger</span>
+        <strong id="ticket-passenger"></strong>
+      </div>
+      <div class="ticket-row" id="ticket-flight-row">
+        <span class="ticket-label">Flight</span>
+        <strong id="ticket-flight"></strong>
+      </div>
+      <div class="ticket-row" id="ticket-hotel-row">
+        <span class="ticket-label">Hotel</span>
+        <strong id="ticket-hotel"></strong>
+      </div>
+      <div class="ticket-row">
+        <span class="ticket-label">Travel dates</span>
+        <strong id="ticket-dates"></strong>
+      </div>
+      <div class="ticket-row">
+        <span class="ticket-label">Payment method</span>
+        <strong id="ticket-payment"></strong>
+      </div>
+      <div class="ticket-row total-row">
+        <span class="ticket-label">Total paid</span>
+        <strong id="ticket-total"></strong>
+      </div>
+    </div>
+    <div class="ticket-actions">
+      <button type="button" id="download-ticket" class="book-button">Download ticket</button>
+      <button type="button" id="close-ticket" class="secondary-button">Close</button>
+    </div>
+  </dialog>
+
+  <!-- Connect Your Hotel Partner Modal with Security Gate & Registration -->
+  <dialog id="connect-hotel-modal" class="connect-hotel-modal">
+    <button type="button" id="connect-hotel-close" class="demo-book-close" aria-label="Close">×</button>
+    
+    <!-- ============================================================ -->
+    <!-- GATEWAY 1: SECURITY GATE & REGISTRATION                      -->
+    <!-- (Shown when hotel owner is not yet verified by Partner ID)   -->
+    <!-- ============================================================ -->
+    <div id="partner-security-gate" class="partner-security-gate">
+      <div class="partner-gate-header">
+        <span class="security-shield-badge">🛡️ APP OWNER SECURITY GATE</span>
+        <h2>Hotel Partner Access &amp; Extranet</h2>
+        <p>Access to publish and manage hotel properties is protected. Enter the <strong>Partner User ID</strong> provided by the app owner, or register below to generate a new verified ID.</p>
+      </div>
+
+      <!-- Mode Switcher Tabs -->
+      <div class="partner-gate-tabs" role="tablist">
+        <button type="button" class="partner-gate-tab active" id="tab-gate-login" role="tab">
+          <span>🔑</span> Enter Partner User ID
+        </button>
+        <button type="button" class="partner-gate-tab" id="tab-gate-register" role="tab">
+          <span>📝</span> Register New Hotel
+        </button>
+      </div>
+
+      <!-- VIEW A: PARTNER LOGIN / USER ID VERIFICATION -->
+      <div id="gate-login-view" class="gate-tab-content">
+        <form id="partner-login-form" class="partner-auth-form">
+          <div class="partner-id-box">
+            <label for="partner-auth-id" class="login-label">PARTNER USER ID / ACCESS KEY</label>
+            <div class="partner-input-wrap">
+              <span class="input-lock-icon">🔐</span>
+              <input 
+                type="text" 
+                id="partner-auth-id" 
+                placeholder="e.g. SMARTFLY-PARTNER-2026 or SF-HTL-..." 
+                autocomplete="off" 
+                required
+              >
+            </div>
+            <small class="partner-input-hint">Provided directly by the SmartFly AI app owner to authorized hoteliers.</small>
+          </div>
+
+          <!-- App Owner Demo / Master Keys Strip -->
+          <div class="app-owner-keys-strip">
+            <div class="keys-title">
+              <span>💡</span>
+              <strong>App Owner Master Access Keys (Click to Auto-fill):</strong>
+            </div>
+            <div class="keys-chips">
+              <button type="button" class="key-chip" data-key="SMARTFLY-PARTNER-2026">SMARTFLY-PARTNER-2026</button>
+              <button type="button" class="key-chip" data-key="OWNER-HOTEL-7788">OWNER-HOTEL-7788</button>
+              <button type="button" class="key-chip" data-key="SF-HOTEL-PRO">SF-HOTEL-PRO</button>
+            </div>
+          </div>
+
+          <button type="submit" id="partner-verify-btn" class="book-button" style="width:100%;height:46px;font-size:13px">
+            <span>🔓 Verify User ID &amp; Unlock Extranet</span>
+            <b>→</b>
+          </button>
+        </form>
+
+        <div class="gate-switch-help">
+          <span>Don't have a Partner User ID yet?</span>
+          <button type="button" id="switch-to-register-btn" class="text-link-btn">Register your hotel now to get an instant User ID →</button>
+        </div>
+      </div>
+
+      <!-- VIEW B: HOTEL REGISTRATION FORM -->
+      <div id="gate-register-view" class="gate-tab-content" hidden>
+        <div class="reg-intro-banner">
+          <span class="icon">🏨</span>
+          <div>
+            <strong>SmartFly AI Partner Application Form</strong>
+            <p>Submit your property details. An official Partner User ID will be generated immediately for your property.</p>
+          </div>
+        </div>
+
+        <form id="partner-register-form" class="connect-hotel-form">
+          <div class="hotel-form-grid">
+            <label class="hotel-form-full">
+              <span>HOTEL / PROPERTY NAME</span>
+              <input id="reg-hotel-name" type="text" placeholder="e.g. The Grand Palace &amp; Suites" required>
+            </label>
+            <label>
+              <span>OWNER / GENERAL MANAGER</span>
+              <input id="reg-owner-name" type="text" placeholder="e.g. Rajesh Sharma" required>
+            </label>
+            <label>
+              <span>OFFICIAL PHONE NUMBER</span>
+              <input id="reg-phone" type="tel" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number" required>
+            </label>
+            <label class="hotel-form-full">
+              <span>OFFICIAL BUSINESS EMAIL</span>
+              <input id="reg-email" type="email" placeholder="reservations@grandpalace.com" required>
+            </label>
+            <label>
+              <span>CITY / DESTINATION</span>
+              <input id="reg-city" type="text" placeholder="e.g. Mumbai" required>
+            </label>
+            <label>
+              <span>INDIAN STATE</span>
+              <select id="reg-state" required>
+                <option>Maharashtra</option>
+                <option>Delhi</option>
+                <option>Karnataka</option>
+                <option>Goa</option>
+                <option>Rajasthan</option>
+                <option>Tamil Nadu</option>
+                <option>Telangana</option>
+                <option>Kerala</option>
+                <option>Gujarat</option>
+                <option>West Bengal</option>
+                <option>Uttar Pradesh</option>
+                <option>Punjab</option>
+                <option>Himachal Pradesh</option>
+                <option>Uttarakhand</option>
+                <option>Other State / UT</option>
+              </select>
+            </label>
+            <label>
+              <span>PROPERTY CATEGORY</span>
+              <select id="reg-type">
+                <option value="5-star">5-Star Luxury Hotel</option>
+                <option value="4-star" selected>4-Star Premium Hotel</option>
+                <option value="3-star">3-Star Business Hotel</option>
+                <option value="resort">Heritage Resort &amp; Spa</option>
+                <option value="boutique">Boutique Villa / Homestay</option>
+              </select>
+            </label>
+            <label>
+              <span>TOTAL ROOMS INVENTORY</span>
+              <input id="reg-rooms" type="number" min="1" max="2500" value="30" required>
+            </label>
+            <label>
+              <span>ESTIMATED NIGHTLY RATE (₹)</span>
+              <input id="reg-rate" type="number" min="500" step="100" value="4800" required>
+            </label>
+            <label>
+              <span>GSTIN / TAX ID (OPTIONAL)</span>
+              <input id="reg-tax-id" type="text" placeholder="e.g. 27AAAAA0000A1Z5">
+            </label>
+          </div>
+
+          <div class="passenger-actions">
+            <button type="button" id="reg-back-to-login" class="secondary-button">← Back to Login</button>
+            <button type="submit" id="reg-submit-btn" class="book-button">
+              <span>📋 Register &amp; Generate Partner ID</span>
+              <b>→</b>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- VIEW C: REGISTRATION SUCCESS CERTIFICATE -->
+      <div id="gate-cert-view" class="gate-tab-content" hidden>
+        <div class="partner-cert-box">
+          <div class="cert-seal">🛡️</div>
+          <span class="cert-pill">OFFICIAL SMARTFLY PARTNER CREDENTIAL</span>
+          <h3>Hotel Registration Approved!</h3>
+          <p>Your property registration has been recorded. Here is your official Partner User ID provided by SmartFly AI:</p>
+          
+          <div class="partner-user-id-display">
+            <span class="id-label">YOUR OFFICIAL PARTNER USER ID</span>
+            <div class="id-row">
+              <strong id="newly-issued-partner-id">SF-HTL-8942</strong>
+              <button type="button" id="copy-partner-id-btn" class="copy-id-btn" title="Copy to clipboard">📋 Copy</button>
+            </div>
+            <small>⚠️ Please save this User ID. You can use it to log in and manage your hotel extranet anytime.</small>
+          </div>
+
+          <div class="cert-property-summary" id="cert-property-summary"></div>
+
+          <button type="button" id="enter-extranet-btn" class="book-button" style="width:100%;height:46px;font-size:13px;margin-top:14px">
+            <span>🚀 Open Hotel Extranet &amp; Publish Photos Now</span>
+            <b>→</b>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- GATEWAY 2: AUTHORIZED PROPERTY EXTRANET                      -->
+    <!-- (Shown ONLY when Partner has verified their Partner User ID) -->
+    <!-- ============================================================ -->
+    <div id="partner-authorized-dashboard" class="partner-authorized-dashboard" hidden>
+      <!-- Session Bar -->
+      <div class="partner-session-bar">
+        <div class="partner-session-info">
+          <span class="partner-status-dot"></span>
+          <div>
+            <strong>Authorized Partner: <span id="active-partner-id-badge">SF-HTL-8942</span></strong>
+            <small id="active-partner-property-badge">Verified SmartFly AI Hotelier</small>
+          </div>
+        </div>
+        <button type="button" id="partner-logout-btn" class="partner-lock-btn" title="Lock session">
+          <span>🔒 Lock / Switch ID</span>
+        </button>
+      </div>
+
+      <div class="hotel-partner-perks">
+        <div class="perk-item"><span>⚡</span> Instant Amadeus GDS sync</div>
+        <div class="perk-item"><span>💰</span> 0% commission first 90 days</div>
+        <div class="perk-item"><span>🔒</span> Verified prepaid bookings</div>
+      </div>
+
+      <!-- Partner Modal Tabs -->
+      <div class="partner-modal-tabs">
+        <button type="button" class="partner-tab active" id="tab-connect-new">➕ Connect New Hotel</button>
+        <button type="button" class="partner-tab" id="tab-manage-hotels">🏨 Manage My Hotels (<span id="partner-hotels-count">0</span>)</button>
+      </div>
+
+      <form id="connect-hotel-form" class="connect-hotel-form">
+        <div class="hotel-form-grid">
+          <label class="hotel-form-full">
+            <span>HOTEL / PROPERTY NAME</span>
+            <input id="partner-hotel-name" type="text" placeholder="e.g. The Grand Palace &amp; Suites" required>
+          </label>
+          <label>
+            <span>CITY / DESTINATION</span>
+            <input id="partner-hotel-city" type="text" placeholder="e.g. Mumbai" required>
+          </label>
+          <label>
+            <span>INDIAN STATE</span>
+            <select id="partner-hotel-state" required>
+              <option>Maharashtra</option>
+              <option>Delhi</option>
+              <option>Karnataka</option>
+              <option>Goa</option>
+              <option>Rajasthan</option>
+              <option>Tamil Nadu</option>
+              <option>Telangana</option>
+              <option>Kerala</option>
+              <option>Gujarat</option>
+              <option>West Bengal</option>
+              <option>Uttar Pradesh</option>
+              <option>Punjab</option>
+              <option>Himachal Pradesh</option>
+              <option>Uttarakhand</option>
+              <option>Andhra Pradesh</option>
+              <option>Madhya Pradesh</option>
+              <option>Assam</option>
+              <option>Bihar</option>
+              <option>Odisha</option>
+              <option>Other State / UT</option>
+            </select>
+          </label>
+          <label>
+            <span>PROPERTY CATEGORY</span>
+            <select id="partner-hotel-type">
+              <option value="5-star">5-Star Luxury Hotel</option>
+              <option value="4-star" selected>4-Star Premium Hotel</option>
+              <option value="3-star">3-Star Business Hotel</option>
+              <option value="resort">Heritage Resort &amp; Spa</option>
+              <option value="boutique">Boutique Villa / Homestay</option>
+            </select>
+          </label>
+          <label>
+            <span>CHANNEL MANAGER / GDS</span>
+            <select id="partner-channel-manager">
+              <option value="amadeus">Amadeus CRS / GDS</option>
+              <option value="rategain">RateGain</option>
+              <option value="siteminder">SiteMinder</option>
+              <option value="staah">STAAH</option>
+              <option value="direct">Direct Extranet / API</option>
+            </select>
+          </label>
+          <label>
+            <span>ROOMS INVENTORY</span>
+            <input id="partner-rooms-count" type="number" min="1" max="2000" value="25" placeholder="e.g. 30" required>
+          </label>
+          <label>
+            <span>AVG. NIGHTLY RATE (₹)</span>
+            <input id="partner-base-rate" type="number" min="500" step="100" value="4500" placeholder="e.g. 4500" required>
+          </label>
+
+          <!-- Image Upload Section -->
+          <div class="hotel-form-full hotel-image-upload-section">
+            <span class="hotel-field-label">HOTEL PHOTOS &amp; COVER IMAGE</span>
+            <div class="hotel-photo-picker-box">
+              <div class="photo-upload-modes">
+                <label class="photo-file-dropzone" for="partner-hotel-file">
+                  <span class="upload-icon">📸</span>
+                  <strong>Choose Hotel Photo from Device</strong>
+                  <small>Click to browse image file (JPG, PNG, WebP)</small>
+                  <input type="file" id="partner-hotel-file" accept="image/*" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px">
+                </label>
+                <div class="photo-or-divider"><span>OR PASTE IMAGE URL</span></div>
+                <div class="photo-url-input-wrap">
+                  <input type="url" id="partner-hotel-image-url" placeholder="https://images.unsplash.com/photo-hotel...">
+                  <button type="button" id="partner-apply-url-btn" class="secondary-button" style="height:38px;padding:0 12px">Apply URL</button>
+                </div>
+              </div>
+
+              <div class="hotel-sample-presets">
+                <span>Quick sample photos:</span>
+                <button type="button" class="preset-pill" data-img="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=640&q=80">Luxury Resort</button>
+                <button type="button" class="preset-pill" data-img="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=640&q=80">City Grand</button>
+                <button type="button" class="preset-pill" data-img="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=640&q=80">Pool Villa</button>
+                <button type="button" class="preset-pill" data-img="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=640&q=80">Heritage Palace</button>
+              </div>
+
+              <div id="partner-image-preview-container" class="partner-image-preview-container">
+                <div class="preview-card">
+                  <img id="partner-preview-img" src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=640&q=80" alt="Hotel preview">
+                  <div class="preview-overlay">
+                    <span class="preview-tag">✓ Active Hotel Photo Preview</span>
+                    <button type="button" id="partner-clear-img-btn" class="preview-remove-btn" title="Reset image">×</button>
+                  </div>
+                </div>
+                <small id="partner-img-source-note">Selected: Luxury Resort Photo</small>
+              </div>
+            </div>
+          </div>
+
+          <label>
+            <span>CONTACT PERSON NAME</span>
+            <input id="partner-contact-name" type="text" placeholder="e.g. Rajesh Sharma (General Manager)" required>
+          </label>
+          <label>
+            <span>OFFICIAL PHONE NUMBER</span>
+            <input id="partner-contact-phone" type="tel" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number" required>
+          </label>
+          <label class="hotel-form-full">
+            <span>OFFICIAL BUSINESS EMAIL</span>
+            <input id="partner-contact-email" type="email" placeholder="reservations@yourhotel.com" required>
+          </label>
+        </div>
+
+        <div class="passenger-actions">
+          <button type="button" id="connect-hotel-cancel" class="secondary-button">Cancel</button>
+          <button type="submit" id="connect-hotel-submit" class="book-button">Submit &amp; Publish to Stays <b>→</b></button>
+        </div>
+      </form>
+
+      <!-- Manage My Hotels Tab Panel -->
+      <div id="partner-manage-panel" class="partner-manage-panel" hidden>
+        <div class="manage-panel-header">
+          <h3>Connected Hotel Properties</h3>
+          <p>Update hotel photos, pricing, or details anytime. Changes automatically sync and appear live in the Stays section.</p>
+        </div>
+        <div id="partner-hotels-list" class="partner-hotels-list"></div>
+      </div>
+
+      <!-- Hidden file input for updating existing hotel photo -->
+      <input type="file" id="update-hotel-file-input" accept="image/*" style="display:none">
+
+      <div id="connect-hotel-success" class="connect-hotel-success" hidden>
+        <div style="font-size:32px;margin-bottom:8px">🏨✨</div>
+        <h3>Hotel Connected &amp; Listed in Stays!</h3>
+        <p id="connect-hotel-success-msg">Your property is now connected. It has been automatically added to the Stays section with your updated pictures and pricing.</p>
+        <div id="connect-hotel-badge" style="font-size:11px;font-weight:700;color:#087f78;background:#fff;padding:8px 14px;border-radius:8px;border:1px solid #a6e0d0;display:inline-block;margin-bottom:14px"></div>
+        <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+          <button type="button" id="view-in-stays-btn" class="book-button" style="padding:10px 18px">👁️ View in Stays Section →</button>
+          <button type="button" id="connect-hotel-done" class="secondary-button" style="padding:10px 18px">Close</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toast-notice" class="toast-notice" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
